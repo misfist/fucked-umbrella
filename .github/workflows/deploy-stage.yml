@@ -1,8 +1,8 @@
-name: deploy-stage
+name: deploy-live
 on:
   push:
     branches:
-      - staging
+      - main
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -18,5 +18,5 @@ jobs:
           REMOTE_HOST: ${{ secrets.SSH_HOST }}
           REMOTE_USER: ${{ secrets.SSH_USER }}
           REMOTE_PORT: "18765"
-          TARGET: ${{ secrets.WORK_DIR }}staging.editor.jacobin.com/public_html/wp-content/plugins/aiac-core-functionality
+          TARGET: ${{ secrets.WORK_DIR }}wp-content/themes/fucked-umbrella
           EXCLUDE: ".*,*lock,*~,phpcs.xml.dist,postcss.config.js,webpack.*.js,.*/,node_modules/"
