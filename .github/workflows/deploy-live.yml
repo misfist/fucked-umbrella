@@ -1,4 +1,4 @@
-name: deploy live
+name: deploy-live
 on:
   push:
     branches:
@@ -9,14 +9,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: unnecessary
-
-      - name: Adding Known Hosts
-        run: ssh-keyscan -H -p 18765 ${{ secrets.SSH_HOST }}  >> ~/.ssh/known_hosts
-
-      - name: Deploy with rsync
-        run: rsync -avz 'ssh -p 18765' --exclude={.*,*lock,*~,phpcs.xml.dist,postcss.config.js,webpack.*.js,.*/,node_modules/,vendor/} --delete ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/www/fuckedumbrella.org/public_html/wp-content/themes/fucked-umbrella
+      - name: Deploy to Server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rlgoDzvc -i --delete"
+          SOURCE: "./"
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          REMOTE_PORT: "18765"
+          TARGET: /home/${{ secrets.SSH_USER }}/www/fuckedumbrella.org/public_html/wp-content/themes/fucked-umbrella
+          EXCLUDE: ".*,*lock,*~,phpcs.xml.dist,postcss.config.js,webpack.*.js,.*/,node_modules/"
